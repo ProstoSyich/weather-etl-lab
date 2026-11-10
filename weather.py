@@ -4,6 +4,7 @@ from collections import defaultdict
 from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
+#=== Fetch 3-hour forecast from OpenWeatherMap ===
 def fetch_forecast(lat, lon):
     api_key = os.getenv("WEATHER_API_KEY")
     base_url = os.getenv("WEATHER_API_BASE_URL")
@@ -35,7 +36,7 @@ def fetch_forecast(lat, lon):
     except requests.RequestException as e:
         print(f"Ошибка сети: {e}")
         return None
-
+#=== Aggregate 3-hour points into daily summaries ===
 def aggregate_by_day(points):
     days = defaultdict(list)
     for p in points:
@@ -66,7 +67,7 @@ def aggregate_by_day(points):
         })
     return result
 
-# ===Wrapper: fetch + aggregate===
+#=== Wrapper: fetch + aggregate ===
 def get_daily(city, lat, lon):
     points = fetch_forecast(lat, lon)
     if points is None:
@@ -77,8 +78,7 @@ def get_daily(city, lat, lon):
     if len(daily) == 0:
         print("Aggregation error: no days")
         return None
-
-    #Add city to each day
+    #=== Add city to each day ===
     for d in daily:
         d["city"] = city
 

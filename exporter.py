@@ -7,7 +7,7 @@ from db_models import WeatherForecast, engine
 load_dotenv()
 
 
-#Get output path from env
+#=== Get output path from env ===
 def get_output_path():
     path = os.getenv("OUTPUT_FILE")
     if not path:
@@ -16,7 +16,7 @@ def get_output_path():
     return path
 
 
-#Load records from db
+#=== Load records from db ===b
 def load_records(city):
     with Session(engine) as session:
         rows = (
@@ -28,7 +28,7 @@ def load_records(city):
     return rows
 
 
-#Build markdown lines
+#=== Build markdown lines ===
 def build_markdown(city, rows):
     first = rows[0].forecast_date
     last = rows[-1].forecast_date
@@ -54,7 +54,7 @@ def build_markdown(city, rows):
     return "\n".join(lines)
 
 
-#Main export
+#=== Main export ===
 def to_markdown(city):
     rows = load_records(city)
 

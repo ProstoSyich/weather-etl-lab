@@ -10,11 +10,11 @@ load_dotenv()
 DB_URL = os.getenv("DB_URL", "sqlite:///weather_lab.db")
 engine = create_engine(DB_URL, echo=False)
 
-
+#=== Base class for models ===
 class Base(DeclarativeBase):
     pass
 
-
+#=== Weather forecast table ===
 class WeatherForecast(Base):
     __tablename__ = "weather_forecast"
 
@@ -28,11 +28,11 @@ class WeatherForecast(Base):
     description: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-
+#=== Create tables if not exist ===
 def init_db():
     Base.metadata.create_all(engine)
 
-
+#=== Save daily forecast, skip duplicates ===
 def save_forecast(city, days):
     saved = 0
     skipped = 0
