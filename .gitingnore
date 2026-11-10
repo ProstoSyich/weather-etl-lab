@@ -1,0 +1,6 @@
+.env
+*.db
+__pychache__/
+.venv/
+venv/
+weather_report.md
