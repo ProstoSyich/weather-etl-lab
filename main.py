@@ -1,8 +1,7 @@
-from geolocator import get_location
-from weather import get_daily
 from db_models import init_db, save_forecast
 from exporter import to_markdown
-
+from geolocator import get_location
+from weather import get_daily
 
 #Main flow
 def main():

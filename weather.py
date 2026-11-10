@@ -5,17 +5,22 @@ from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 #=== Fetch 3-hour forecast from OpenWeatherMap ===
-def fetch_forecast(lat, lon):
+def fetch_forecast(city, lat, lon):
     api_key = os.getenv("WEATHER_API_KEY")
     base_url = os.getenv("WEATHER_API_BASE_URL")
 
     params = {
-        "lat": lat,
-        "lon": lon,
         "appid": api_key,
         "units": "metric",
         "lang": "ru",
     }
+
+    # Fallback
+    if lat is not None and lon is not None:
+        params["lat"] = lat
+        params["lon"] = lon
+    else:
+        params["q"] = city
 
     try:
         response = requests.get(base_url, params=params, timeout =10)
@@ -37,7 +42,7 @@ def fetch_forecast(lat, lon):
         print(f"Ошибка сети: {e}")
         return None
 #=== Aggregate 3-hour points into daily summaries ===
-def aggregate_by_day(points):
+def aggregate_by_day(points, city):
     days = defaultdict(list)
     for p in points:
         date_str = p["dt_txt"].split(" ")[0]
@@ -58,6 +63,7 @@ def aggregate_by_day(points):
                 break
 
         result.append({
+            "city": city,
             "date": date_str,
             "temp_min": min(temps_min),
             "temp_max": max(temps_max),
@@ -69,19 +75,15 @@ def aggregate_by_day(points):
 
 #=== Wrapper: fetch + aggregate ===
 def get_daily(city, lat, lon):
-    points = fetch_forecast(lat, lon)
+    points = fetch_forecast(city, lat, lon)
     if points is None:
         print("OpenWeatherMap forecast error")
         return None
 
-    daily = aggregate_by_day(points)
+    daily = aggregate_by_day(points, city)
     if len(daily) == 0:
         print("Aggregation error: no days")
         return None
-    #=== Add city to each day ===
-    for d in daily:
-        d["city"] = city
-
     return daily
 
 #if __name__ == "__main__":
