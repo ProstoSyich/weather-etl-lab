@@ -56,7 +56,6 @@ def main():
     if path is None:
         print("Markdown export error")
         return 5
-
     print(f"File: {path}")
     return 0
 
